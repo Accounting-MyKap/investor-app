@@ -22,7 +22,7 @@ mongoose.connect(process.env.DATABASE_URL)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 // --- Session Configuration ---
 app.use(session({
