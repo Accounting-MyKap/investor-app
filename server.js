@@ -22,7 +22,7 @@ mongoose.connect(process.env.DATABASE_URL)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Session Configuration ---
 app.use(session({
@@ -32,7 +32,7 @@ app.use(session({
     store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL })
 }));
 
-app.use(express.static('public'));
+
 
 // Middleware to load user data on each request if logged in
 app.use(async (req, res, next) => {
