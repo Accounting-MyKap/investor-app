@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 2em; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        ul { list-style: none; padding: 0; }
+        li { border: 1px solid #ccc; padding: 1em; margin-bottom: 0.5em; border-radius: 5px; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .nav-link { display: inline-block; margin-bottom: 1em; }
+        form { margin-bottom: 2em; padding: 1.5em; border: 1px dashed #ccc; border-radius: 5px; }
+        form div { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
+        input[type="text"], input[type="email"] { width: 100%; padding: 0.5em; box-sizing: border-box; }
+        button { padding: 0.7em 1.5em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="nav-link">&larr; Volver al Dashboard de Créditos</a>
+        <h1><%= pageTitle %></h1>
+
+        <form action="/investor" method="POST">
+            <h2>Registrar Nuevo Inversor</h2>
+            <div>
+                <label for="name">Nombre del Inversor:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="email">Email de Contacto:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <button type="submit">Crear Inversor</button>
+        </form>
+
+        <h2>Inversores Registrados</h2>
+        <% if (investors.length > 0) { %>
+            <ul>
+                <% investors.forEach(investor => { %>
+                    <li>
+                        <a href="/investor/<%= investor._id %>" style="font-weight: bold; font-size: 1.2em;">
+                            <%= investor.name %>
+                        </a> <br>
+                        <strong>Email:</strong> <%= investor.email %>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>Aún no hay inversores registrados en la base de datos.</p>
+        <% } %>
+    </div>
+</body>
+</html>

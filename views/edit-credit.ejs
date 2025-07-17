@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Crédito: <%= credit.clientName %></title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 2em; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        form { margin-top: 2em; }
+        form div { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 0.5em; box-sizing: border-box; }
+        button { padding: 0.7em 1.5em; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        a { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/credit/<%= credit.id %>">&larr; Cancelar y Volver al Detalle</a>
+        <h1>Editar Crédito</h1>
+
+        <form action="/credit/update/<%= credit.id %>" method="POST">
+            <h2>Modificando: <%= credit.clientName %></h2>
+            <div>
+                <label for="clientName">Nombre del Cliente:</label>
+                <input type="text" id="clientName" name="clientName" value="<%= credit.clientName %>" required>
+            </div>
+            <div>
+                <label for="totalAmount">Monto Total:</label>
+                <input type="number" id="totalAmount" name="totalAmount" value="<%= credit.totalAmount %>" required>
+            </div>
+            <button type="submit">Guardar Cambios</button>
+        </form>
+    </div>
+</body>
+</html>

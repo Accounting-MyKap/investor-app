@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Inversor</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 2em; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #333; }
+        ul { list-style: none; padding: 0; }
+        li { border: 1px solid #ccc; padding: 1em; margin-bottom: 0.5em; border-radius: 5px; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .nav-link { display: inline-block; margin-bottom: 1em; }
+        form { margin-top: 1em; padding: 1.5em; border: 1px dashed #ccc; border-radius: 5px; }
+        form div { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
+        input[type="number"] { width: 100%; padding: 0.5em; box-sizing: border-box; }
+        button { padding: 0.7em 1.5em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/investors" class="nav-link">&larr; Volver a la Lista de Inversores</a>
+        <h1>Detalle del Inversor</h1>
+
+        <h2><%= investor.name %></h2>
+        <p><strong>Email:</strong> <%= investor.email %></p>
+
+        <hr>
+
+        <h2>Portfolio Loans (Aportes de Capital)</h2>
+        
+        <form action="/portfolio-loan" method="POST">
+            <h3>Registrar Nuevo Aporte</h3>
+            <input type="hidden" name="investorId" value="<%= investor._id %>">
+            <div>
+                <label for="amount">Monto del Aporte:</label>
+                <input type="number" id="amount" name="amount" required>
+            </div>
+            <button type="submit">Registrar Aporte</button>
+        </form>
+
+        <h3>Aportes Registrados</h3>
+        <% if (portfolioLoans.length > 0) { %>
+            <ul>
+                <% portfolioLoans.forEach(loan => { %>
+                    <li>
+                        <strong>Monto Inicial:</strong> $<%= loan.initialAmount.toLocaleString() %> <br>
+                        <strong>Monto Disponible:</strong> $<%= loan.availableAmount.toLocaleString() %> <br>
+                        <strong>Fecha de Registro:</strong> <%= new Date(loan.date).toLocaleDateString() %>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>Este inversor aún no tiene aportes de capital registrados.</p>
+        <% } %>
+        
+    </div>
+</body>
+</html>

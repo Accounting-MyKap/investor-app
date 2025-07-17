@@ -1,0 +1,25 @@
+<%- include('partials/header', { pageTitle: 'Credit Detail' }) %>
+
+<a href="/">&larr; Back to Dashboard</a>
+<h1>Credit Detail</h1>
+<a href="/credit/edit/<%= credit._id %>" class="btn btn-warning mb-3">Edit Credit</a>
+
+<h2><%= credit.clientName %></h2>
+<p>
+    <strong>ID:</strong> <%= credit._id %> <br>
+    <strong>Total Amount:</strong> $<%= credit.totalAmount.toLocaleString() %>
+</p>
+<hr>
+
+<div class="card my-4">
+    <div class="card-header">
+        <h3 class="h5">Assign Capital</h3>
+    </div>
+    <div class="card-body">
+        <form action="/investment" method="POST">
+            </form>
+    </div>
+</div>
+
+<h3>Received Investments (Co-investments)</h3>
+<%- include('partials/footer') %>
