@@ -1,4 +1,7 @@
-// VERSIÓN COMPLETA Y CORREGIDA - JULIO 17
+// =================================================================
+// --- IMPORTS AND INITIAL SETUP ---
+// =================================================================
+
 console.log("--- INICIANDO SERVIDOR, VERSIÓN COMPLETA ---");
 
 require('dotenv').config();
@@ -13,19 +16,33 @@ const dataManager = require('./data-manager.js');
 const app = express();
 const port = 3000;
 
-// --- Database Connection ---
+// =================================================================
+// --- DATABASE CONNECTION ---
+// =================================================================
+
 mongoose.connect(process.env.DATABASE_URL)
   .then(() => console.log("✅ Connection to MongoDB Atlas successful."))
   .catch((error) => console.error("❌ Error connecting to MongoDB:", error));
 
-// --- Express & Middleware Configuration ---
+// =================================================================
+// --- MIDDLEWARE CONFIGURATION ---
+// =================================================================
+
+// 1. View Engine Setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// 2. Body Parser for Forms
 app.use(express.urlencoded({ extended: true }));
-// app.use(express.static(path.join(__dirname, 'public'))); // - Para ver la imagenes en localhost:3000
+
+// 3. Static Files (for local development)
+// This line serves files from the 'public' folder (like images).
+// It's commented out as requested, because Vercel handles this in production.
+// Uncomment it if you have issues seeing images on localhost.
+// app.use(express.static(path.join(__dirname, 'public')));
 
 
-// --- Session Configuration ---
+// 4. Session Configuration
 app.use(session({
     secret: 'a-very-strong-secret-to-sign-the-cookie',
     resave: false,
@@ -34,8 +51,7 @@ app.use(session({
 }));
 
 
-
-// Middleware to load user data on each request if logged in
+// 5. Custom Middleware to Load User on Every Request
 app.use(async (req, res, next) => {
     if (req.session.userId) {
         res.locals.currentUser = await dataManager.getUserById(req.session.userId);
@@ -43,25 +59,23 @@ app.use(async (req, res, next) => {
     next();
 });
 
+// 6. "Guardian" Middleware to Protect Routes
 const isAuthenticated = (req, res, next) => {
     if (req.session.userId) { return next(); }
     res.redirect('/login');
 };
 
 // =================================================================
-// APPLICATION ROUTES
+// --- AUTHENTICATION ROUTES (PUBLIC) ---
 // =================================================================
 
-// --- Authentication Routes (Public) ---
 app.get('/register', (req, res) => {
-    res.render('register');
+    res.render('register', { pageTitle: 'Sign Up' });
 });
 
 app.post('/register', async (req, res) => {
     try {
-        // Ahora extraemos firstName y lastName
         const { firstName, lastName, email, password } = req.body;
-        // Y se los pasamos a la función de registro
         await dataManager.registerUser(firstName, lastName, email, password);
         res.redirect('/login');
     } catch (error) {
@@ -105,23 +119,51 @@ app.post('/logout', (req, res, next) => {
 });
 
 
-// --- Application Routes (Protected) ---
+// =================================================================
+// --- CORE APPLICATION ROUTES (PROTECTED) ---
+// =================================================================
 
 app.get('/', isAuthenticated, async (req, res) => {
     try {
         const allCredits = await dataManager.getAllCredits();
-        res.render('index', { pageTitle: 'Dashboard de Créditos', credits: allCredits });
+        res.render('index', { pageTitle: 'Dashboard', credits: allCredits });
     } catch (error) {
-        res.status(500).send("Error al obtener los créditos.");
+        res.status(500).send("Error al obtener la vista Dashboard.");
     }
 });
 
-app.get('/investors', isAuthenticated, async (req, res) => {
+// --- Prospects Module ---
+app.get('/prospects', isAuthenticated, async (req, res) => {
     try {
-        const allInvestors = await dataManager.getAllInvestors();
-        res.render('investors', { pageTitle: 'Gestión de Inversores', investors: allInvestors });
+        const allProspects = await dataManager.getAllProspects();
+        const allUsers = await dataManager.getAllUsers();
+        res.render('prospects', { 
+            pageTitle: 'Prospects', 
+            prospects: allProspects,
+            users: allUsers 
+        });
     } catch (error) {
-        res.status(500).send("Error al obtener los inversores.");
+        res.status(500).send("Error fetching prospects.");
+    }
+});
+
+app.get('/prospects/:id', isAuthenticated, async (req, res) => {
+    try {
+        const prospect = await dataManager.getProspectById(req.params.id);
+        if (!prospect) { return res.status(404).send("Prospect not found"); }
+        res.render('prospect-detail', { pageTitle: `Prospect: ${prospect.clientName}`, prospect });
+    } catch (error) {
+        res.status(500).send("Error fetching prospect details.");
+    }
+});
+
+// --- Lenders Module (Formerly Investors) ---
+app.get('/lenders', isAuthenticated, async (req, res) => {
+    try {
+        const allLenders = await dataManager.getAllLenders();
+        res.render('lenders', { pageTitle: 'Lenders', lenders: allLenders });
+    } catch (error) {
+        res.status(500).send("Error fetching lenders.");
     }
 });
 
@@ -162,6 +204,15 @@ app.get('/credit/edit/:id', isAuthenticated, async (req, res) => {
 
 // --- Rutas POST (Protegidas) ---
 
+app.post('/prospects', isAuthenticated, async (req, res) => {
+    try {
+        await dataManager.addProspect(req.body);
+        res.redirect('/prospects');
+    } catch (error) {
+        res.status(500).send("Error creating prospect.");
+    }
+});
+
 app.post('/credit', isAuthenticated, async (req, res) => {
     try {
         const { clientName, totalAmount } = req.body;
@@ -174,15 +225,15 @@ app.post('/credit', isAuthenticated, async (req, res) => {
     }
 });
 
-app.post('/investor', isAuthenticated, async (req, res) => {
+app.post('/lender', isAuthenticated, async (req, res) => {
     try {
         const { name, email } = req.body;
         if (name && email) {
-            await dataManager.addInvestor(name, email);
+            await dataManager.addLender(name, email);
         }
-        res.redirect('/investors');
+        res.redirect('/lenders');
     } catch (error) {
-        res.status(500).send("Error al crear el inversor.");
+        res.status(500).send("Error creating lender.");
     }
 });
 
@@ -234,7 +285,11 @@ app.post('/investment/delete/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-// --- Server Initialization ---
+
+// =================================================================
+// --- SERVER INITIALIZATION ---
+// =================================================================
+
 app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);
 });

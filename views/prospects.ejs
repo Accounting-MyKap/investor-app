@@ -1,0 +1,53 @@
+<%- include('partials/header', { pageTitle: 'Prospects' }) %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 fw-bold">Prospects</h1>
+    <div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newProspectModal">
+            <i class="bi bi-plus-circle me-2"></i>New Prospect
+        </button>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="card-title mb-0">List of active and in-process prospects</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Client Name</th>
+                    <th>Loan Type</th>
+                    <th class="text-end">Amount</th>
+                    <th>Stage</th>
+                    <th>Assigned To</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (prospects.length > 0) { %>
+                    <% prospects.forEach(prospect => { %>
+                        <tr>
+                            <td>
+                                <a href="/prospects/<%= prospect._id %>" class="fw-bold text-dark text-decoration-none"><%= prospect.clientName %></a>
+                                <div class="small text-muted"><%= prospect.email %></div>
+                            </td>
+                            <td><%= prospect.loanType %></td>
+                            <td class="text-end">$<%= prospect.loanAmount.toLocaleString() %></td>
+                            <td><span class="badge bg-info text-dark-emphasis"><%= prospect.status %></span></td>
+                            <td><%= prospect.assignedTo ? prospect.assignedTo.firstName : 'Unassigned' %></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No prospects found. Create the first one!</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<%- include('partials/add-prospect-modal', { users: users }) %>
+
+<%- include('partials/footer') %>
