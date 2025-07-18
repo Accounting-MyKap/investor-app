@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs');
 // =================================================================
 
 const userSchema = new mongoose.Schema({
+    firstName: { type: String, required: true }, // <-- CAMBIADO
+    lastName: { type: String, required: true },  // <-- AÑADIDO
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true, select: false },
     role: { type: String, required: true, default: 'Procesador' }
@@ -56,8 +58,8 @@ const Investment = mongoose.model('Investment', investmentSchema);
 // =================================================================
 
 // --- Funciones de Usuario ---
-async function registerUser(email, password, role) {
-    const newUser = new User({ email, password, role });
+async function registerUser(firstName, lastName, email, password, role) { // <-- CAMBIADO
+    const newUser = new User({ firstName, lastName, email, password, role }); // <-- CAMBIADO
     return await newUser.save();
 }
 

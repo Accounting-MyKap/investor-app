@@ -27,11 +27,17 @@
         <div class="card-body p-4 p-md-5">
             <div class="text-center mb-4">
                 <img src="/images/logo-full.png" alt="MyKap Logo" style="width: 150px; margin-bottom: 1rem;">
-                
                 <h2 class="fw-bold">Create Your Account</h2>
-                <p class="text-muted">Get started by creating your account.</p>
             </div>
             <form action="/register" method="POST">
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" id="firstName" name="firstName" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" class="form-control" required>
+                </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" id="email" name="email" class="form-control" required>

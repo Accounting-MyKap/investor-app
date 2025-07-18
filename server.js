@@ -59,12 +59,13 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        await dataManager.registerUser(email, password);
+        // Ahora extraemos firstName y lastName
+        const { firstName, lastName, email, password } = req.body;
+        // Y se los pasamos a la función de registro
+        await dataManager.registerUser(firstName, lastName, email, password);
         res.redirect('/login');
     } catch (error) {
-        console.error("--- ERROR REAL AL REGISTRAR ---", error);
-        res.status(500).send("Error al registrar el usuario. El email puede que ya esté en uso.");
+        res.status(500).send("Error registering user. The email may already be in use.");
     }
 });
 
