@@ -30,8 +30,8 @@
         .sidebar .logo-icono { display: none; }
         body.sidebar-collapsed .sidebar .logo-icono { display: inline; }
         
-        .sidebar-brand-wrapper { padding: 1.5rem 1rem; display: flex; align-items: center; justify-content: space-between; }
-        .sidebar-brand { font-weight: 700; text-decoration: none; }
+        .sidebar-brand-wrapper { padding: 1.5rem 1rem; display: flex; align-items: center; }
+        .sidebar-brand { font-weight: 700; text-decoration: none; flex-grow: 1; text-align: center; }
         #sidebarToggle { color: var(--sidebar-link-color); border: none; }
         #sidebarToggle:hover { color: #000; background-color: #f0f0f0; }
 
@@ -46,9 +46,10 @@
 <body>
     <div class="sidebar d-flex flex-column p-3">
         <div class="sidebar-brand-wrapper">
-            <a href="/" class="sidebar-brand text-dark">
-                <img src="/images/logo-full.png" alt="MyKap ERP" class="logo-completo" style="max-height: 40px;">
-                <img src="/images/logo-icon.png" alt="MyKap" class="logo-icono" style="max-height: 40px;">
+            <a href="/" class="sidebar-brand text-dark text-decoration-none">
+                <img src="/images/logo-full.png" alt="MyKap ERP Logo" class="logo-completo" style="height: 50px;">
+                
+                <img src="/images/logo-icon.png" alt="MyKap Logo" class="logo-icono" style="height: 32px;">
             </a>
             <button class="btn" id="sidebarToggle"><i class="bi bi-list fs-3"></i></button>
         </div>
